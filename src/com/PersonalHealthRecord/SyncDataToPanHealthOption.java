@@ -44,54 +44,27 @@ public class SyncDataToPanHealthOption extends Activity{
        l11 = (LinearLayout)findViewById(R.id.l1);
        l11.setPadding(0, 20, 0, 0);
        
+    // Getting current MemberID for the purpose of transactions which was saved in a class called session..
        String userID = ss.getSessionMemberID();
-       
-       /*String memID = ss.getSessionMemberID();
-		String userID = "A";
-		for(int i=0; i<(12-memID.length()); i++)
-		{
-			userID = userID+"0";
-		}
-		if(memID.contains("A"))
- 			memID = memID.replace("A", "");
- 		else if(memID.contains("a"))
- 			memID = memID.replace("a", "");
-		
-	    userID = userID + memID;*/
-               
+                      
        TextView userIDT = (TextView)findViewById(R.id.userID);
        userIDT.setText("Patient ID: "+userID);
        
-       Display display = ((WindowManager) getSystemService(WINDOW_SERVICE)).getDefaultDisplay();
-
-       int width = display.getWidth();
-       int height = display.getHeight();
-       int orientation = display.getOrientation();
-       if(width > height)
-       {
-        	 RelativeLayout rLayout = (RelativeLayout) findViewById (R.id.rLogin);
-             Resources res = getResources(); //resource handle
-             Drawable drawable = res.getDrawable(R.drawable.background_2); //new Image that was added to the res folder
-
-             rLayout.setBackgroundDrawable(drawable);
-             
-           //  l11.setPadding(0, 20, 0, 0);
-
-        }	
-       else if(width < height)
-       {
-        	 RelativeLayout rLayout = (RelativeLayout) findViewById (R.id.rLogin);
-             Resources res = getResources(); //resource handle
-             Drawable drawable = res.getDrawable(R.drawable.background_1); //new Image that was added to the res folder
-
-             rLayout.setBackgroundDrawable(drawable);
-             
-          //   l11.setPadding(0, 150, 0, 0);
-
-        }
+       
        work();
        
    }
+   
+   /*
+	Type: function
+	Name: All
+	Parameters: -
+	Return Type: -
+	Date: 29/6/11
+	Purpose: To display all logs
+
+*/
+   
    void All()
    {
 	   glucose();
@@ -101,8 +74,19 @@ public class SyncDataToPanHealthOption extends Activity{
 	   HbA1c();
    }
    
+   /*
+	Type: function
+	Name: HbA1c
+	Parameters: -
+	Return Type: -
+	Date: 29/6/11
+	Purpose: To display all HbA1c logs
+
+*/
    void HbA1c()
    {
+	   
+	   // function in database class in order to get all HbA1c logs
 	   Cursor mCursor = db.SyncHbA1cLog(MemberID);
 	   if(mCursor.getCount() > 0)
 		 {
@@ -138,6 +122,9 @@ public class SyncDataToPanHealthOption extends Activity{
      			androidHttpTransport.call(SOAP_ACTION, envelope);
      			SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
      			
+     		// If data updated successfully..
+     			// status is changed to "y" in local db...
+     			
      			db.updateAllLog(gid, "y");
      			
      			text.append("\nHbA1c Data Sync successfully!!");
@@ -154,8 +141,18 @@ public class SyncDataToPanHealthOption extends Activity{
 			 text.append("\nNo more Hemoglobin Data to Sync...");
    }
    
+   /*
+	Type: function
+	Name: Hemoglobin
+	Parameters: -
+	Return Type: -
+	Date: 29/6/11
+	Purpose: To display all Hemoglobin logs
+
+*/
    void Hemoglobin()
    {
+	// function in database class in order to get all Hemoglobin logs
 	   Cursor mCursor = db.SyncHGLog(MemberID);
 	   if(mCursor.getCount() > 0)
 		 {
@@ -191,6 +188,9 @@ public class SyncDataToPanHealthOption extends Activity{
      			androidHttpTransport.call(SOAP_ACTION, envelope);
      			SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
      			
+     		// If data updated successfully..
+     			// status is changed to "y" in local db...
+     			
      			db.updateAllLog(gid, "y");
      			
      			text.append("\nHemoglobin Data Sync successfully!!");
@@ -208,8 +208,19 @@ public class SyncDataToPanHealthOption extends Activity{
 	   
    }
    
+   
+   /*
+	Type: function
+	Name: Weight
+	Parameters: -
+	Return Type: -
+	Date: 29/6/11
+	Purpose: To display all Weight logs
+
+*/
    void Weight()
    {
+	// function in database class in order to get all Weight logs
 	   Cursor mCursor = db.SyncWTLog(MemberID);
 	   if(mCursor.getCount() > 0)
 		 {
@@ -241,14 +252,16 @@ public class SyncDataToPanHealthOption extends Activity{
      		envelope.dotNet=true;
      		envelope.encodingStyle = SoapSerializationEnvelope.XSD;
      		HttpTransportSE androidHttpTransport = new HttpTransportSE(URL);
-     				//$theVariable = array('MemberID'=> 'A4303','DataType'=> 'BG','ComDeviceID'=>'SPB502','ComDeviceSrNo'=>'NVX8696SPB','TstConFood'=>'A','Bg'=> $bg_value[$i],'ReadingDT' => $bg_date[$i],'Source' => '108 Medical Id','Method' => 'WEB');
+     			
      		
      		
      		try {
-     			//Toast.makeText(getBaseContext(), "Data Uploaded Successfully",Toast.LENGTH_SHORT).show();
+     			
      			androidHttpTransport.call(SOAP_ACTION, envelope);
      			SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
      			
+     		// If data updated successfully..
+     			// status is changed to "y" in local db...
      			db.updateAllLog(gid, "y");
      			text.append("\nWeight Data Sync successfully!!");
 					
@@ -263,8 +276,19 @@ public class SyncDataToPanHealthOption extends Activity{
 			 text.append("\nNo more Weight Data to Sync...");
    }
    
+   /*
+	Type: function
+	Name: Pressure
+	Parameters: -
+	Return Type: -
+	Date: 29/6/11
+	Purpose: To display all Pressure logs
+
+*/
+   
    void Pressure()
    {
+	// function in database class in order to get all Pressure logs
 	   Cursor mCursor = db.SyncBPLog(MemberID);
 	   if(mCursor.getCount() > 0)
 		 {
@@ -306,6 +330,8 @@ public class SyncDataToPanHealthOption extends Activity{
      			androidHttpTransport.call(SOAP_ACTION, envelope);
      			SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
      			
+     		// If data updated successfully..
+     			// status is changed to "y" in local db...
      			db.updateAllLog(gid, "y");
      			
     			text.append("\nBP Data Sync successfully!!");
@@ -324,8 +350,18 @@ public class SyncDataToPanHealthOption extends Activity{
 			 text.append("\nNo more BP Data to Sync...");
    }
    
+   /*
+	Type: function
+	Name: glucose
+	Parameters: -
+	Return Type: -
+	Date: 29/6/11
+	Purpose: To display all glucose logs
+
+*/
    void glucose()
    {
+	// function in database class in order to get all glucose logs
 	 Cursor mCursor = db.SyncGlucoseLog(MemberID);
 	 if(mCursor.getCount() > 0)
 	 {
@@ -360,6 +396,9 @@ public class SyncDataToPanHealthOption extends Activity{
  		 			
  			androidHttpTransport.call(SOAP_ACTION, envelope);
  			SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
+ 			
+ 			// If data updated successfully..
+ 			// status is changed to "y" in local db...
  			
  			db.updateAllLog(gid, "y");
  			

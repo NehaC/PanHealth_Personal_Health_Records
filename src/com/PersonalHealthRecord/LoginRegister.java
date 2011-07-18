@@ -49,6 +49,8 @@ public class LoginRegister extends Activity{
 	        text1 = (TextView)findViewById(R.id.text1);
 	        text1.setText("");
 	        
+	        // Retrieving the new allotted ID and Password in order to display and login...
+	        
 	        uname1 = ss.getSessionNewID();
 	        pwd1 = ss.getSessionNewPass();
 	        
@@ -120,12 +122,19 @@ public class LoginRegister extends Activity{
 	  	            startActivity(i);
 	      		}*/
 	      		
+	      		
+	      	// Using Soap protocol in order to pass data to the webservice... 
+	      		// Checking for valid login...
+	      		
 	      	SoapObject request = new SoapObject(NAMESPACE, METHOD_NAME);
 	  		
 	      	String uname1 = uname.getText().toString();
 	      	String pwd1 = pwd.getText().toString();
 	      	ss.setSessionMemberID(uname1);	
 	      	
+	      	
+	     // adding parameters to be passed...
+			  //(param_name, param_value)
 	  		request.addProperty("strUserid", uname1);
 	  		request.addProperty("strPass", pwd1);
 	  				
@@ -141,7 +150,9 @@ public class LoginRegister extends Activity{
 	  		{
 	  			androidHttpTransport.call(SOAP_ACTION, envelope);
 	  			Object resultsRequestSOAP = (Object) envelope.getResponse();
-	  			  			
+	  			  		
+	  			//Handling the reponse... resultsRequestSOAP...
+	  			
 	  			if((resultsRequestSOAP.toString()).equals("False"))
 	  				text1.setText("Invalid Login!!");
 	  			else

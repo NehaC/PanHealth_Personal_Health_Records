@@ -62,40 +62,9 @@ public class RegisterPatient extends Activity{
 	        setContentView(R.layout.register_patient);
 	        
 	        db.open();
-	        //  First, get the Display from the WindowManager 
-	          Display display = ((WindowManager) getSystemService(WINDOW_SERVICE)).getDefaultDisplay();
-
-	          // Now we can retrieve all display-related infos 
-	          int width = display.getWidth();
-	          int height = display.getHeight();
-	          int orientation = display.getOrientation();
-	          
-	          // 3 - hori                  0 - portrait
-	          
-	          lo = (TextView)findViewById(R.id.lo);
+	        lo = (TextView)findViewById(R.id.lo);
 	          lo.setPadding(0, 20, 0, 0);
-	          if(width > height)
-	          {
-	          	 RelativeLayout rLayout = (RelativeLayout) findViewById (R.id.rLogin);
-	               Resources res = getResources(); //resource handle
-	               Drawable drawable = res.getDrawable(R.drawable.background_2); //new Image that was added to the res folder
-
-	               rLayout.setBackgroundDrawable(drawable);
-	               
-	          //     lo.setPadding(0, 20, 0, 0);
-
-	          }
-	          else if(width < height)
-	          {
-	          	RelativeLayout rLayout = (RelativeLayout) findViewById (R.id.rLogin);
-	              Resources res = getResources(); //resource handle
-	              Drawable drawable = res.getDrawable(R.drawable.background_1); //new Image that was added to the res folder
-
-	              rLayout.setBackgroundDrawable(drawable);
-
-	          //    lo.setPadding(0, 150, 0, 0);
-	              //lo.setPadding(0, 20, 0, 0);
-	          }
+	       
 	          work();
 	    }
 	    
@@ -108,24 +77,7 @@ public class RegisterPatient extends Activity{
 	    	    return false;
 	    	}
 	    
-	    void ValidatePhoneNumber ()
-	    {
-	    	//String sPhoneNumber = "605-8889999";
-	    	String sPhoneNumber = "9970666666";
-	       	   
-	        //Pattern pattern = Pattern.compile("\\d{3}-\\d{7}");
-	        Pattern pattern = Pattern.compile("\\d{10}");
-	        Matcher matcher = pattern.matcher(sPhoneNumber);
-	   
-	        if (matcher.matches()) {
-	      	  System.out.println("Phone Number Valid");
-	        }
-	        else
-	        {
-	      	  System.out.println("Phone Number must be in the form XXX-XXXXXXX");
-	        }
-
-	    }
+	    
 	    
 	    boolean checkNo(String sPhoneNumber)
 	    {
@@ -194,10 +146,11 @@ public class RegisterPatient extends Activity{
 	  			{ 
 	  			register.setBackgroundResource(R.drawable.register_h);
 	  			text1.setText("");
+	  			
+	  			// Checking if all fields entered or not...
+	  			
 	  			if((fname.getText().toString()).equals(""))
 	      	   		text1.setText("First name not entered!!");
-	  			/*else if((mname.getText().toString()).equals(""))
-	      	   		text1.setText("Middle name not entered!!");*/
 	  			else if((lname.getText().toString()).equals(""))
 	      	   		text1.setText("Last name not entered!!");
 	  			else if(!((phno.getText().toString()).equals(phno1.getText().toString())))
@@ -220,7 +173,7 @@ public class RegisterPatient extends Activity{
 	  				else 
 	  					contacttype = 5;
 	  				 
-	  				
+	  			// Using Soap protocol in order to pass data to the webservice... 
 	  				SoapObject request = new SoapObject(NAMESPACE, METHOD_NAME);
 	  		  		
 	  				String fname1 = fname.getText().toString();
@@ -235,6 +188,8 @@ public class RegisterPatient extends Activity{
 	  				System.out.println("Phone: "+phno.getText().toString());
 	  				System.out.println("type: "+contacttype);
 	  				
+	  			// adding parameters to be passed...
+					  //(param_name, param_value)
 	  		  		request.addProperty("strFirst", fname.getText().toString());
 	  		  		request.addProperty("strMid", mname.getText().toString());
 	  		  		request.addProperty("strLast", lname.getText().toString());
@@ -258,6 +213,8 @@ public class RegisterPatient extends Activity{
 	  		  		androidHttpTransport.call(SOAP_ACTION, envelope);
 	  	  			Object resultsRequestSOAP = (Object) envelope.getResponse();
 	  		  			
+	  	  			// Handling response....
+	  	  			
 	  		  			System.out.println("Response: "+resultsRequestSOAP);
 	  		  			if(resultsRequestSOAP == null)
 	  		  			{
@@ -275,7 +232,9 @@ public class RegisterPatient extends Activity{
 	  		  				System.out.println("ID: "+id1);
 	  		  				System.out.println("Pwd: "+pwd1);
 	  		  				text2.setText("Your ID: "+id1+"\nPassword: "+pwd1);
-	  		  				  		  				
+	  		  				  	
+	  		  			// Reset all controls..
+	  		  				
 	  		  				final Calendar c = Calendar.getInstance();
 	  		  				mYear = c.get(Calendar.YEAR);
 	  		  				mMonth = c.get(Calendar.MONTH);
@@ -294,6 +253,8 @@ public class RegisterPatient extends Activity{
 	  		  				ss.setSessionNewID(id1);
 	  		  				ss.setSessionNewPass(pwd1);
   		  				
+	  		  				//Inserting details in local db for workoffline purpose...
+	  		  				
 	  		  				db.insertLogin(id1, pwd1, fname1+", "+lname1, 1);
 	  		  				
 	  		  				Intent i1 = new Intent(RegisterPatient.this, LoginRegister.class);
@@ -302,6 +263,8 @@ public class RegisterPatient extends Activity{
 	  		  			}
 	  		  		  		  			
 	  		  		} catch (Exception e) {
+	  		  			
+	  		  		// Error message prompted if complete and necessary data not entered..
 	  		  			text2.setText("");
 	  		  			text1.setText("Due to some problem Registration not done...");
 	  		  			register.setBackgroundResource(R.drawable.register);
@@ -347,6 +310,8 @@ public class RegisterPatient extends Activity{
 	  			}
 	  		});
 	    }
+	   
+	    // Email ID validations...
 	    
 	    public final Pattern EMAIL_ADDRESS_PATTERN = Pattern.compile(
 	            "[a-zA-Z0-9\\+\\.\\_\\%\\-\\+]{1,256}" +
@@ -358,6 +323,8 @@ public class RegisterPatient extends Activity{
 	            ")+"
 	        );
 
+	    
+	    // Check if valid EmailID...
 	    private boolean checkEmail(String email) {
 	        return EMAIL_ADDRESS_PATTERN.matcher(email).matches();
 	    }
@@ -394,29 +361,5 @@ public class RegisterPatient extends Activity{
 	                    .append(mYear).append(" "));
 	    }
 	    
-	    @Override
-	      public void onConfigurationChanged(Configuration newConfig) {
-
-	          super.onConfigurationChanged(newConfig);
-
-	          if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
-	        	  RelativeLayout rLayout = (RelativeLayout) findViewById (R.id.rLogin);
-	              Resources res = getResources(); //resource handle
-	              Drawable drawable = res.getDrawable(R.drawable.background_1); //new Image that was added to the res folder
-
-	              rLayout.setBackgroundDrawable(drawable);
-	              
-	       //       lo.setPadding(0, 150, 0, 0);
-	              //lo.setPadding(0, 20, 0, 0);
-
-	          } else if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-	        	  RelativeLayout rLayout = (RelativeLayout) findViewById (R.id.rLogin);
-	              Resources res = getResources(); //resource handle
-	              Drawable drawable = res.getDrawable(R.drawable.background_2); //new Image that was added to the res folder
-
-	              rLayout.setBackgroundDrawable(drawable);
-	              
-	         //     lo.setPadding(0, 20, 0, 0);
-	          }
-	      }
+	   
 }

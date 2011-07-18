@@ -18,7 +18,6 @@ import android.os.Bundle;
 import android.view.Display;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -29,7 +28,6 @@ import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
-import android.widget.Toast;
 
 public class EnterWeight extends Activity{
 
@@ -70,33 +68,7 @@ public class EnterWeight extends Activity{
         setContentView(R.layout.enter_weight1);
         l11 = (LinearLayout)findViewById(R.id.l10);
         l11.setPadding(0, 20, 0, 0);
-        Display display = ((WindowManager) getSystemService(WINDOW_SERVICE)).getDefaultDisplay();
-
-        int width = display.getWidth();
-        int height = display.getHeight();
-        int orientation = display.getOrientation();
-        if(width > height)
-        {
-         	 RelativeLayout rLayout = (RelativeLayout) findViewById (R.id.rLogin);
-              Resources res = getResources(); //resource handle
-              Drawable drawable = res.getDrawable(R.drawable.background_2); //new Image that was added to the res folder
-
-              rLayout.setBackgroundDrawable(drawable);
-              
-           //   l11.setPadding(0, 20, 0, 0);
-
-         }	
-        else if(width < height)
-        {
-         	 RelativeLayout rLayout = (RelativeLayout) findViewById (R.id.rLogin);
-              Resources res = getResources(); //resource handle
-              Drawable drawable = res.getDrawable(R.drawable.background_1); //new Image that was added to the res folder
-
-              rLayout.setBackgroundDrawable(drawable);
-              
-             // l11.setPadding(0, 150, 0, 0);
-
-         }
+       
         work();
         
        
@@ -168,23 +140,12 @@ public class EnterWeight extends Activity{
 	
     void work()
     {
+    	// In order to do any transactions with database.. Need to open the database..
     	 db.open();
          
+    	// Getting current MemberID for the purpose of transactions which was saved in a class called session..
     	 String userID = ss.getSessionMemberID();
-    	 
-         /*String memID = ss.getSessionMemberID();
- 		String userID = "A";
- 		for(int i=0; i<(12-memID.length()); i++)
- 		{
- 			userID = userID+"0";
- 		}
- 		if(memID.contains("A"))
- 			memID = memID.replace("A", "");
- 		else if(memID.contains("a"))
- 			memID = memID.replace("a", "");
- 		
- 	    userID = userID + memID;*/
-                 
+    	
          TextView userIDT = (TextView)findViewById(R.id.userID);
          userIDT.setText("Patient ID: "+userID);
          
@@ -235,21 +196,9 @@ public class EnterWeight extends Activity{
  		});
          
          dateDisplay = (TextView)findViewById(R.id.dateDisplay);
-         /*dateDisplay.setOnClickListener(new Button.OnClickListener() 
- 		{ public void onClick (View v)
- 			{ 
- 				showDialog(DATE_DIALOG_ID);
- 			}
- 		});*/
-         
          mTimeDisplay = (TextView)findViewById(R.id.mTimeDisplay);
-         /*mTimeDisplay.setOnClickListener(new Button.OnClickListener() 
- 		{ public void onClick (View v)
- 			{ 
- 				showDialog(TIME_DIALOG_ID);
- 			}
- 		});*/
-         
+        
+         // getting current date and time... 
          final Calendar c = Calendar.getInstance();
          mYear = c.get(Calendar.YEAR);
          mMonth = c.get(Calendar.MONTH);
@@ -257,6 +206,7 @@ public class EnterWeight extends Activity{
          mHour = c.get(Calendar.HOUR_OF_DAY);
          mMinute = c.get(Calendar.MINUTE);
 
+      // Functions called in order to set current date and time as default...
          updateDisplay();
          updateDisplay1();
          
@@ -288,11 +238,14 @@ public class EnterWeight extends Activity{
  				if(!((uieditbox.getText().toString()).equals("")))
  				{	
  				
- 				//int value = Integer.parseInt(uieditbox.getText().toString());
- 				
- 				
+
+ 					// Using Soap protocol in order to pass data to the webservice... 
+ 					// In this.. Only data is sent.. No response handling done..
  				
  				SoapObject request = new SoapObject(NAMESPACE, METHOD_NAME);
+ 				
+ 			// adding parameters to be passed...
+				  //(param_name, param_value)
          		request.addProperty("MemberID", memId);
          		request.addProperty("DataType", "WT");
          		request.addProperty("ComDeviceID", "SPB502");
@@ -312,13 +265,16 @@ public class EnterWeight extends Activity{
          		envelope.dotNet=true;
          		envelope.encodingStyle = SoapSerializationEnvelope.XSD;
          		HttpTransportSE androidHttpTransport = new HttpTransportSE(URL);
-         				//$theVariable = array('MemberID'=> 'A4303','DataType'=> 'BG','ComDeviceID'=>'SPB502','ComDeviceSrNo'=>'NVX8696SPB','TstConFood'=>'A','Bg'=> $bg_value[$i],'ReadingDT' => $bg_date[$i],'Source' => '108 Medical Id','Method' => 'WEB');
+         			
          		
          		
          		try {
-         			//Toast.makeText(getBaseContext(), "Data Uploaded Successfully",Toast.LENGTH_SHORT).show();
+         		
          			androidHttpTransport.call(SOAP_ACTION, envelope);
          			SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
+         			
+         		// Since data uploaded successfully on site.. 
+        			// Insert query is fired to local database with status - "y"
          			
          			long id = db.insertLog(memId, "WT", "SPB502", "NVX8696SPB", item1, 
      						0,0,0,0,Integer.parseInt(uieditbox.getText().toString()),
@@ -329,6 +285,7 @@ public class EnterWeight extends Activity{
      				else
      					System.out.println("Failed to Add!");
          			
+     			// Reset all controls.. So that new data can be entered..
          			TextView text = (TextView)findViewById(R.id.msgtext1);
  					text.setText("Data Uploaded Successfully!!");
  					uieditbox.setText("");
@@ -344,6 +301,9 @@ public class EnterWeight extends Activity{
          			//ACTV.setHint("Received :" + resultsRequestSOAP.toString());
          		} catch (Exception e) {
          			
+         		// Since data not uploaded successfully on site.. 
+        			// Insert query is fired to local database with status - "n"
+         			
          			long id = db.insertLog(memId, "WT", "SPB502", "NVX8696SPB", item1, 
      						0,0,0,0,Integer.parseInt(uieditbox.getText().toString()),
      						0,0,"",0,item, date_time, "n");
@@ -353,8 +313,9 @@ public class EnterWeight extends Activity{
      				else
      					System.out.println("Failed to Add!");
          			
+     			// Reset all controls.. So that new data can be entered..
          			TextView text = (TextView)findViewById(R.id.msgtext1);
- 					text.setText("As no Internet connection..\nData added to local database..");
+ 					text.setText("Sorry for inconvenience..\nDue to some problem, Data added to local database..");
  					uieditbox.setText("");
  					final Calendar c = Calendar.getInstance();
  			        mYear = c.get(Calendar.YEAR);
@@ -368,11 +329,10 @@ public class EnterWeight extends Activity{
          			e.printStackTrace();
          		}
 
-         		/*TextView text = (TextView)findViewById(R.id.text);
- 				text.setText("");*/
  			}
  			else
  			{
+ 			// Error message prompted if complete and necessary data not entered.. 
  				TextView text = (TextView)findViewById(R.id.msgtext1);
  				text.setText("Data not Entered!!");
  			}
@@ -383,29 +343,5 @@ public class EnterWeight extends Activity{
  		});
     }
     
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-
-        super.onConfigurationChanged(newConfig);
-
-        if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
-       	 RelativeLayout rLayout = (RelativeLayout) findViewById (R.id.rLogin);
-            Resources res = getResources(); //resource handle
-            Drawable drawable = res.getDrawable(R.drawable.background_1); //new Image that was added to the res folder
-
-            rLayout.setBackgroundDrawable(drawable);
-            
-       //     l11.setPadding(0, 150, 0, 0);
-
-       } else if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-       	 RelativeLayout rLayout = (RelativeLayout) findViewById (R.id.rLogin);
-            Resources res = getResources(); //resource handle
-            Drawable drawable = res.getDrawable(R.drawable.background_2); //new Image that was added to the res folder
-
-            rLayout.setBackgroundDrawable(drawable);
-            
-      //      l11.setPadding(0, 20, 0, 0);
-       }
-    }
     
 }

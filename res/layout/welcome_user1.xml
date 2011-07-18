@@ -13,7 +13,7 @@
         android:layout_height="fill_parent"
         android:padding="5px"
         android:id="@+id/rLogin"
-    	android:background="@drawable/background_2"
+    	
     	>
 
 	<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -95,12 +95,7 @@
           	android:layout_height="wrap_content"
           	android:text="View local Data" 
           	android:textColor="#000000"/>
-        <!--<RadioButton android:id="@+id/add_medication"
-          	android:layout_width="wrap_content"
-          	android:layout_height="wrap_content"
-          	android:text="Add new Medication" 
-          	android:textColor="#000000"/>  	
-        --><RadioButton android:id="@+id/sync_data"
+       <RadioButton android:id="@+id/sync_data"
           	android:layout_width="wrap_content"
           	android:layout_height="wrap_content"
           	android:text="Sync Data to PanHealth" 

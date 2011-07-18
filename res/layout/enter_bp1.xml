@@ -5,8 +5,7 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:background="#ffffff"
-    
+    android:background="@drawable/background_1"
     >
 <RelativeLayout 
 	 	xmlns:android="http://schemas.android.com/apk/res/android"
@@ -14,7 +13,7 @@
         android:layout_height="fill_parent"
         android:id="@+id/rLogin"
         android:padding="5px"
-    	android:background="@drawable/background_2"
+    	
     	>
 
 	<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -259,12 +258,7 @@
      
      </LinearLayout>
         
-  <!--<TextView android:id="@+id/text" 
- android:layout_width="wrap_content" 
- android:layout_height="wrap_content"
-  android:layout_gravity="center" 
-  android:textColor="#000000" /> 
-  --><LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal"
     android:id="@+id/l8"
     android:paddingTop="5px"

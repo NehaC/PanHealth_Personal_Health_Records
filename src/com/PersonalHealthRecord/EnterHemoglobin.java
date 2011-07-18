@@ -12,22 +12,15 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
-import android.content.res.Configuration;
-import android.content.res.Resources;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.view.Display;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.TimePicker;
-import android.widget.Toast;
 
 public class EnterHemoglobin extends Activity{
 	
@@ -61,33 +54,7 @@ public class EnterHemoglobin extends Activity{
         setContentView(R.layout.enter_hemoglobin1);
         l11 = (LinearLayout)findViewById(R.id.l10);
         l11.setPadding(0, 20, 0, 0);
-        Display display = ((WindowManager) getSystemService(WINDOW_SERVICE)).getDefaultDisplay();
-
-        int width = display.getWidth();
-        int height = display.getHeight();
-        int orientation = display.getOrientation();
-        if(width > height)
-        {
-         	 RelativeLayout rLayout = (RelativeLayout) findViewById (R.id.rLogin);
-              Resources res = getResources(); //resource handle
-              Drawable drawable = res.getDrawable(R.drawable.background_2); //new Image that was added to the res folder
-
-              rLayout.setBackgroundDrawable(drawable);
-              
-            //  l11.setPadding(0, 20, 0, 0);
-
-         }	
-        else if(width < height)
-        {
-         	 RelativeLayout rLayout = (RelativeLayout) findViewById (R.id.rLogin);
-              Resources res = getResources(); //resource handle
-              Drawable drawable = res.getDrawable(R.drawable.background_1); //new Image that was added to the res folder
-
-              rLayout.setBackgroundDrawable(drawable);
-              
-          //    l11.setPadding(0, 150, 0, 0);
-
-         }
+       
         work();
                    
         
@@ -159,23 +126,12 @@ public class EnterHemoglobin extends Activity{
 
     void work()
     {
+    	// In order to do any transactions with database.. Need to open the database..
     	db.open();
         
+    	// Getting current MemberID for the purpose of transactions which was saved in a class called session..
     	String userID = ss.getSessionMemberID();
-    	
-       /* String memID = ss.getSessionMemberID();
-		String userID = "A";
-		for(int i=0; i<(12-memID.length()); i++)
-		{
-			userID = userID+"0";
-		}
-		if(memID.contains("A"))
- 			memID = memID.replace("A", "");
- 		else if(memID.contains("a"))
- 			memID = memID.replace("a", "");
-		
-	    userID = userID + memID;*/
-                
+    	                
         TextView userIDT = (TextView)findViewById(R.id.userID);
         userIDT.setText("Patient ID: "+userID);
         
@@ -206,11 +162,9 @@ public class EnterHemoglobin extends Activity{
 		});
         
         dateDisplay = (TextView)findViewById(R.id.dateDisplay);
-       
-        
         mTimeDisplay = (TextView)findViewById(R.id.mTimeDisplay);
-       
-        
+
+     // getting current date and time...
         final Calendar c = Calendar.getInstance();
         mYear = c.get(Calendar.YEAR);
         mMonth = c.get(Calendar.MONTH);
@@ -218,6 +172,7 @@ public class EnterHemoglobin extends Activity{
         mHour = c.get(Calendar.HOUR_OF_DAY);
         mMinute = c.get(Calendar.MINUTE);
 
+     // Functions called in order to set current date and time as default...
         updateDisplay();
         updateDisplay1();
         
@@ -233,19 +188,20 @@ public class EnterHemoglobin extends Activity{
 				System.out.println("Date: "+date_time+" editbox: "+uieditbox.getText().toString());
 				
 				String memId = ss.getSessionMemberID();
-						
-				//int value = Integer.parseInt(uieditbox.getText().toString());
-				
+								
 				submit.setBackgroundResource(R.drawable.submit);
 				
 				String umane = uieditbox.getText().toString();
 				if(!((uieditbox.getText().toString()).equals("")))
 				{	
 				
-				
+					// Using Soap protocol in order to pass data to the webservice... 
+					// In this.. Only data is sent.. No response handling done..
 				
 				SoapObject request = new SoapObject(NAMESPACE, METHOD_NAME);
         		
+				// adding parameters to be passed...
+				  //(param_name, param_value)
         		request.addProperty("MemberID", memId);
         		request.addProperty("DataType", "HG");
         		request.addProperty("ComDeviceID", "SPB502");
@@ -266,9 +222,12 @@ public class EnterHemoglobin extends Activity{
         		
         		
         		try {
-        			//Toast.makeText(getBaseContext(), "Data Uploaded Successfully",Toast.LENGTH_SHORT).show();
+        		
         			androidHttpTransport.call(SOAP_ACTION, envelope);
         			SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
+        			
+        			// Since data uploaded successfully on site.. 
+        			// Insert query is fired to local database with status - "y"
         			
         			long id = db.insertLog(memId, "HG", "SPB502", "NVX8696SPB", 
         					"",0,0,0,0,0,
@@ -280,6 +239,7 @@ public class EnterHemoglobin extends Activity{
     				else
     					System.out.println("Failed to Add!");
         			
+    				// Reset all controls.. So that new data can be entered..
         			TextView text = (TextView)findViewById(R.id.msgtext2);
 					text.setText("Data Uploaded Successfully!!");
 					uieditbox.setText("");
@@ -295,6 +255,9 @@ public class EnterHemoglobin extends Activity{
         			
         		} catch (Exception e) {
         			
+        			// Since data not uploaded successfully on site.. 
+        			// Insert query is fired to local database with status - "n"
+        			
         			long id = db.insertLog(memId, "HG", "SPB502", "NVX8696SPB", 
         					"",0,0,0,0,0,
         					Integer.parseInt(uieditbox.getText().toString()),
@@ -305,8 +268,9 @@ public class EnterHemoglobin extends Activity{
     				else
     					System.out.println("Failed to Add!");
         			
+    				// Reset all controls.. So that new data can be entered..
         			TextView text = (TextView)findViewById(R.id.msgtext2);
-					text.setText("As no Internet connection..\nData added to local database..");
+					text.setText("Sorry for inconvenience..\nDue to some problem, Data added to local database..");
 					uieditbox.setText("");
 					final Calendar c = Calendar.getInstance();
 			        mYear = c.get(Calendar.YEAR);
@@ -319,13 +283,11 @@ public class EnterHemoglobin extends Activity{
 			        updateDisplay1();
         			e.printStackTrace();
         		}
-
-           	 
-        		/*TextView text = (TextView)findViewById(R.id.text);
-				text.setText("");*/
-			}
+        		
+           	}
 			else
 			{
+				// Error message prompted if complete and necessary data not entered.. 
 				TextView text = (TextView)findViewById(R.id.msgtext2);
 				text.setText("Data not Entered!!");
 			}
@@ -335,29 +297,6 @@ public class EnterHemoglobin extends Activity{
 		});
     }
     
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-
-        super.onConfigurationChanged(newConfig);
-
-        if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
-       	 RelativeLayout rLayout = (RelativeLayout) findViewById (R.id.rLogin);
-            Resources res = getResources(); //resource handle
-            Drawable drawable = res.getDrawable(R.drawable.background_1); //new Image that was added to the res folder
-
-            rLayout.setBackgroundDrawable(drawable);
-            
-           // l11.setPadding(0, 150, 0, 0);
-
-       } else if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-       	 RelativeLayout rLayout = (RelativeLayout) findViewById (R.id.rLogin);
-            Resources res = getResources(); //resource handle
-            Drawable drawable = res.getDrawable(R.drawable.background_2); //new Image that was added to the res folder
-
-            rLayout.setBackgroundDrawable(drawable);
-            
-         //   l11.setPadding(0, 20, 0, 0);
-       }
-    }
+   
 }
 

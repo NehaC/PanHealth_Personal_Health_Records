@@ -1,6 +1,5 @@
 package com.PersonalHealthRecord;
 
-import java.util.Calendar;
 import java.util.regex.Pattern;
 
 import org.ksoap2.SoapEnvelope;
@@ -49,40 +48,10 @@ public class ForgotPassword extends Activity{
 	        super.onCreate(savedInstanceState);
 	        setContentView(R.layout.forgot_password);
 	        
-	        //  First, get the Display from the WindowManager 
-	          Display display = ((WindowManager) getSystemService(WINDOW_SERVICE)).getDefaultDisplay();
-
-	          // Now we can retrieve all display-related infos 
-	          int width = display.getWidth();
-	          int height = display.getHeight();
-	          int orientation = display.getOrientation();
-	          
-	          // 3 - hori                  0 - portrait
-	          
-	          lo = (TextView)findViewById(R.id.lo);
+	        lo = (TextView)findViewById(R.id.lo);
 	          lo.setPadding(0, 20, 0, 0);
-	          if(width > height)
-	          {
-	          	 RelativeLayout rLayout = (RelativeLayout) findViewById (R.id.rLogin);
-	               Resources res = getResources(); //resource handle
-	               Drawable drawable = res.getDrawable(R.drawable.background_2); //new Image that was added to the res folder
-
-	               rLayout.setBackgroundDrawable(drawable);
-	               
-	             //  lo.setPadding(0, 20, 0, 0);
-
-	          }
-	          else if(width < height)
-	          {
-	          	RelativeLayout rLayout = (RelativeLayout) findViewById (R.id.rLogin);
-	              Resources res = getResources(); //resource handle
-	              Drawable drawable = res.getDrawable(R.drawable.background_1); //new Image that was added to the res folder
-
-	              rLayout.setBackgroundDrawable(drawable);
-
-	           //   lo.setPadding(0, 150, 0, 0);
-	              //lo.setPadding(0, 20, 0, 0);
-	          }
+	        
+	       
 	          work();
 	    }
 	    
@@ -220,33 +189,7 @@ public class ForgotPassword extends Activity{
 	  		});
 	    }
 	    
-	    
-	    
-	    @Override
-	      public void onConfigurationChanged(Configuration newConfig) {
-
-	          super.onConfigurationChanged(newConfig);
-
-	          if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
-	        	  RelativeLayout rLayout = (RelativeLayout) findViewById (R.id.rLogin);
-	              Resources res = getResources(); //resource handle
-	              Drawable drawable = res.getDrawable(R.drawable.background_1); //new Image that was added to the res folder
-
-	              rLayout.setBackgroundDrawable(drawable);
-	              
-	              //lo.setPadding(0, 150, 0, 0);
-	              //lo.setPadding(0, 20, 0, 0);
-
-	          } else if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-	        	  RelativeLayout rLayout = (RelativeLayout) findViewById (R.id.rLogin);
-	              Resources res = getResources(); //resource handle
-	              Drawable drawable = res.getDrawable(R.drawable.background_2); //new Image that was added to the res folder
-
-	              rLayout.setBackgroundDrawable(drawable);
-	              
-	              //lo.setPadding(0, 20, 0, 0);
-	          }
-	      }
+	   
 }
 
 

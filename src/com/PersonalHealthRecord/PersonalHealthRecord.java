@@ -50,54 +50,22 @@ public class PersonalHealthRecord extends Activity {
         
         db.open();
         
+        lo = (TextView)findViewById(R.id.lo);
+        lo.setPadding(0, 20, 0, 0);
         
-        	//  First, get the Display from the WindowManager 
-          Display display = ((WindowManager) getSystemService(WINDOW_SERVICE)).getDefaultDisplay();
-
-          // Now we can retrieve all display-related infos 
-          int width = display.getWidth();
-          int height = display.getHeight();
-          int orientation = display.getOrientation();
-          
-          // 3 - hori                  0 - portrait
-          setContentView(R.layout.login1);
-          register = (TextView)findViewById(R.id.register);
-          //forgot_pwd = (TextView)findViewById(R.id.forgot_pwd);
-          lo = (TextView)findViewById(R.id.lo);
-          lo.setPadding(0, 20, 0, 0);
-          
-          
-          work();
-          if(width > height)
-          {
-          	   RelativeLayout rLayout = (RelativeLayout) findViewById (R.id.rLogin);
-               Resources res = getResources(); //resource handle
-               Drawable drawable = res.getDrawable(R.drawable.background_2); //new Image that was added to the res folder
-
-               rLayout.setBackgroundDrawable(drawable);
-               
-               //lo.setPadding(0, 40, 0, 0);
-
-          }
-          else if(width < height)
-          {
-          	  RelativeLayout rLayout = (RelativeLayout) findViewById (R.id.rLogin);
-              Resources res = getResources(); //resource handle
-              Drawable drawable = res.getDrawable(R.drawable.background_1); //new Image that was added to the res folder
-
-              rLayout.setBackgroundDrawable(drawable);
-
-              //lo.setPadding(0, 250, 0, 0);
-              //lo.setPadding(0, 40, 0, 0);
-          }
-          work();
-        /* Toast.makeText(getBaseContext(), 
-          		"orientation: "+orientation+"\nwidth: "+width+"\nheight: "+height,
-          		Toast.LENGTH_LONG).show();*/
-          
-         
-      }
+        work();
+        }
       
+    /*
+	Type: function
+	Name: isOnline
+	Parameters: -
+	Return Type: boolean
+	Date: 29/6/11
+	Purpose: to check whether internet connection is available...
+
+*/
+    
     	public boolean isOnline() 
     	{
     			ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -114,6 +82,16 @@ public class PersonalHealthRecord extends Activity {
       	uname.setText("");
       	pwd.setText("");
       }
+      
+      /*
+  	Type: function
+  	Name: workOffLine
+  	Parameters: -
+  	Return Type: -
+  	Date: 29/6/11
+  	Purpose: to login offline
+
+  */
       
       void workOffLine()
       {
@@ -164,6 +142,16 @@ public class PersonalHealthRecord extends Activity {
   			});
     }
       
+      /*
+  	Type: function
+  	Name: createUID
+  	Parameters: ID entered while login
+  	Return Type: ID which is converted to length: 12
+  	Date: 29/6/11
+  	Purpose: In order to convert our patient ID to length:12
+
+  */
+      
       String createUID(String uname3)
       {
     	  String memID = uname3;
@@ -183,6 +171,16 @@ public class PersonalHealthRecord extends Activity {
       }
 
       
+      /*
+    	Type: function
+    	Name: checkValidate
+    	Parameters: -
+    	Return Type: -
+    	Date: 29/6/11
+    	Purpose: In order to check if all fields are enetered and call webservice to validate them 
+
+    */
+      
       void checkValidate()
       {
       	if((uname.getText().toString()).equals(""))
@@ -192,13 +190,17 @@ public class PersonalHealthRecord extends Activity {
       	else    	
       	{
       	
-      		
+      	// Using Soap protocol in order to pass data to the webservice...	
       	SoapObject request = new SoapObject(NAMESPACE, METHOD_NAME);
   		
       	String uname1 = uname.getText().toString();
       	String pwd1 = pwd.getText().toString();
+      	
+      	//storing MemberID in session.. 
       	ss.setSessionMemberID(createUID(uname1));	
       	
+     // adding parameters to be passed...
+		  //(param_name, param_value)
   		request.addProperty("strUserid", uname1);
   		request.addProperty("strPass", pwd1);
   				
@@ -214,15 +216,17 @@ public class PersonalHealthRecord extends Activity {
   		{
   			androidHttpTransport.call(SOAP_ACTION, envelope);
   			Object resultsRequestSOAP = (Object) envelope.getResponse();
-  			//Toast.makeText(getBaseContext(), "Data Retrieved Successfully",Toast.LENGTH_SHORT).show();
   			
-  		//	text1.setText("Rply: "+resultsRequestSOAP);
-  			
+  			// Handling response....
   			
   			if((resultsRequestSOAP.toString()).equals("False"))
   				text1.setText("Invalid Login!!");
   			else
   			{
+  				
+  				// If valid login.. Then storing Patient name in session.. 
+  				//Which will be used for display purpose in future..
+  				
   				ss.setSessionMemberName(resultsRequestSOAP.toString());
   	    		
   	    		Intent i = new Intent(PersonalHealthRecord.this, HomePage.class);
@@ -231,14 +235,7 @@ public class PersonalHealthRecord extends Activity {
   			}
   			
   		} catch (Exception e) {
-  			text1.setText("Please check your Internet Connection...");
-  			/*offLine.setText(R.string.click_offline);
-  			offLine.setOnClickListener(new Button.OnClickListener() 
-  	   		{ public void onClick (View v)
-  	   			{ 
-  	   				workOffLine();
-  	   			}
-  	   		});*/
+  			text1.setText("Sorry for the inconvenience.. \nPlease try again after some time..");
   			e.printStackTrace();
   		}
 
@@ -261,9 +258,15 @@ public class PersonalHealthRecord extends Activity {
            
            offLine = (TextView)findViewById(R.id.offLine);
            
+           // First check for internet connection...
+           // If not available give option to work offline...
+           
            if(!(isOnline()))
            {
 	        	text1.setText("Internet Connection is not available...");
+	        	
+	        	
+	        	
 	        	//offLine.setText(R.string.click_offline);
 	        	/*offLine.setOnClickListener(new Button.OnClickListener() 
 	  	   		{ public void onClick (View v)
@@ -274,7 +277,7 @@ public class PersonalHealthRecord extends Activity {
 	  	   		
            }
            
-           //register = (TextView)findViewById(R.id.register);
+            register = (TextView)findViewById(R.id.register);
            	register.setText(R.string.register);
      	  	register.setOnClickListener(new Button.OnClickListener() 
      		{ public void onClick (View v)
@@ -286,11 +289,13 @@ public class PersonalHealthRecord extends Activity {
      			}
      		});
            
+     	  	// Code commented for forgot password...
+     	  	
      	  	/*forgot_pwd.setText(R.string.forgot_pws);
      	  	forgot_pwd.setOnClickListener(new Button.OnClickListener() 
      		{ public void onClick (View v)
      			{ 
-     			//Toast.makeText(getBaseContext(), "Register",Toast.LENGTH_SHORT).show();
+     			//Toast.makeText(getBaseContext(), "Forgot Password",Toast.LENGTH_SHORT).show();
      				Intent i = new Intent(PersonalHealthRecord.this, ForgotPassword.class);
  					startActivity(i);
      			}
@@ -318,29 +323,5 @@ public class PersonalHealthRecord extends Activity {
            
       }
       
-      @Override
-      public void onConfigurationChanged(Configuration newConfig) {
-
-          super.onConfigurationChanged(newConfig);
-
-          if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
-        	  RelativeLayout rLayout = (RelativeLayout) findViewById (R.id.rLogin);
-              Resources res = getResources(); //resource handle
-              Drawable drawable = res.getDrawable(R.drawable.background_2); //new Image that was added to the res folder
-
-              rLayout.setBackgroundDrawable(drawable);
-              
-             // lo.setPadding(0, 250, 0, 0);
-              //lo.setPadding(0, 40, 0, 0);
-
-          } else if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-        	  RelativeLayout rLayout = (RelativeLayout) findViewById (R.id.rLogin);
-              Resources res = getResources(); //resource handle
-              Drawable drawable = res.getDrawable(R.drawable.background_1); //new Image that was added to the res folder
-
-              rLayout.setBackgroundDrawable(drawable);
-              
-             // lo.setPadding(0, 40, 0, 0);
-          }
-      }
+    
 }

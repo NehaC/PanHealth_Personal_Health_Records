@@ -33,55 +33,16 @@ public class SelectOption extends Activity{
         setContentView(R.layout.select_option1);
         l11 = (LinearLayout)findViewById(R.id.l10);
         l11.setPadding(0, 20, 0, 0);
-        Display display = ((WindowManager) getSystemService(WINDOW_SERVICE)).getDefaultDisplay();
-
-        int width = display.getWidth();
-        int height = display.getHeight();
-        int orientation = display.getOrientation();
-        if(width > height)
-        {
-         	 RelativeLayout rLayout = (RelativeLayout) findViewById (R.id.rLogin);
-              Resources res = getResources(); //resource handle
-              Drawable drawable = res.getDrawable(R.drawable.background_2); //new Image that was added to the res folder
-
-              rLayout.setBackgroundDrawable(drawable);
-              
-           //   l11.setPadding(0, 20, 0, 0);
-
-         }	
-        else if(width < height)
-        {
-         	 RelativeLayout rLayout = (RelativeLayout) findViewById (R.id.rLogin);
-              Resources res = getResources(); //resource handle
-              Drawable drawable = res.getDrawable(R.drawable.background_1); //new Image that was added to the res folder
-
-              rLayout.setBackgroundDrawable(drawable);
-              
-            //  l11.setPadding(0, 150, 0, 0);
-
-         }
+       
         work();
         
     }
 
     void work()
     {
-    	
+    	// Getting current MemberID for the purpose of transactions which was saved in a class called session..
     	String userID = ss.getSessionMemberID();
     	
-    	/*String memID = ss.getSessionMemberID();
-		String userID = "A";
-		for(int i=0; i<(12-memID.length()); i++)
-		{
-			userID = userID+"0";
-		}
-		if(memID.contains("A"))
- 			memID = memID.replace("A", "");
- 		else if(memID.contains("a"))
- 			memID = memID.replace("a", "");
-		
-	    userID = userID + memID;*/
-                
         TextView userIDT = (TextView)findViewById(R.id.userID);
         userIDT.setText("Patient ID: "+userID);
        
@@ -131,14 +92,7 @@ public class SelectOption extends Activity{
 			}
 		});
         
-        /*ImageButton manual = (ImageButton)findViewById(R.id.manual);
-        manual.setOnClickListener(new Button.OnClickListener() 
-		{ public void onClick (View v)
-			{ 
-				Intent i = new Intent(SelectOption.this, EnterGlucose.class);
-				startActivity(i);
-			}
-		});*/
+      
         
         back = (Button)findViewById(R.id.back);
         back.setOnClickListener(new Button.OnClickListener() 
@@ -153,29 +107,6 @@ public class SelectOption extends Activity{
        
     }
     
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-
-        super.onConfigurationChanged(newConfig);
-
-        if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
-       	 RelativeLayout rLayout = (RelativeLayout) findViewById (R.id.rLogin);
-            Resources res = getResources(); //resource handle
-            Drawable drawable = res.getDrawable(R.drawable.background_1); //new Image that was added to the res folder
-
-            rLayout.setBackgroundDrawable(drawable);
-            
-          //  l11.setPadding(0, 150, 0, 0);
-
-       } else if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-       	 RelativeLayout rLayout = (RelativeLayout) findViewById (R.id.rLogin);
-            Resources res = getResources(); //resource handle
-            Drawable drawable = res.getDrawable(R.drawable.background_2); //new Image that was added to the res folder
-
-            rLayout.setBackgroundDrawable(drawable);
-            
-          //  l11.setPadding(0, 20, 0, 0);
-       }
-    }
+   
 
 }

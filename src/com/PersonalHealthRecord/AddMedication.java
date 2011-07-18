@@ -81,8 +81,7 @@ public class AddMedication extends Activity{
         tl = (TableLayout) findViewById(R.id.maintable);
         
         comment = (EditText)findViewById(R.id.comment);
-        
-        
+     
         
     	 mTimeDisplay[0] = (TextView)findViewById(R.id.mTimeDisplay1);
          mTimeDisplay[1] = (TextView)findViewById(R.id.mTimeDisplay2);
@@ -114,36 +113,7 @@ public class AddMedication extends Activity{
          
          l11.setPadding(0, 20, 0, 0);
         
-        Display display = ((WindowManager) getSystemService(WINDOW_SERVICE)).getDefaultDisplay();
-
-        int width = display.getWidth();
-        int height = display.getHeight();
-        int orientation = display.getOrientation();
-        if(width > height)
-        {
-        	 RelativeLayout rLayout = (RelativeLayout) findViewById (R.id.rLogin);
-             Resources res = getResources(); //resource handle
-             Drawable drawable = res.getDrawable(R.drawable.background_2); //new Image that was added to the res folder
-
-             rLayout.setBackgroundDrawable(drawable);
-             
-           //  l11.setPadding(0, 20, 0, 0);
-
-        }		 
-        else if(width < height)
-        {
-        	 RelativeLayout rLayout = (RelativeLayout) findViewById (R.id.rLogin);
-             Resources res = getResources(); //resource handle
-             Drawable drawable = res.getDrawable(R.drawable.background_1); //new Image that was added to the res folder
-
-             rLayout.setBackgroundDrawable(drawable);
-             
-           //  l11.setPadding(0, 150, 0, 0);
-
-        }	
-       
-        
-        
+               
         db.open();
         
         String memID = ss.getSessionMemberID();
@@ -299,13 +269,7 @@ public class AddMedication extends Activity{
             public void onClick(View v) {
                 // Perform action on clicks
                 RadioButton rb = (RadioButton) v;
-                //Toast.makeText(SelectOption.this, rb.getText(), Toast.LENGTH_SHORT).show();
-                            
-               /*	ss.setSessionSyncData(rb.getText().toString());
-                	
-                	Intent i = new Intent(SyncDataToPanHealthOption.this, SyncDataToPanHealth.class);
-    				startActivity(i);*/
-                
+               
                 String sync = rb.getText().toString();
                 
                 if(sync.equals("1"))
@@ -712,30 +676,5 @@ public class AddMedication extends Activity{
             return "0" + String.valueOf(c);
     }
     
-       
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-
-        super.onConfigurationChanged(newConfig);
-
-        if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
-       	 RelativeLayout rLayout = (RelativeLayout) findViewById (R.id.rLogin);
-            Resources res = getResources(); //resource handle
-            Drawable drawable = res.getDrawable(R.drawable.background_1); //new Image that was added to the res folder
-
-            rLayout.setBackgroundDrawable(drawable);
-            
-         //   l11.setPadding(0, 150, 0, 0);
-
-       } else if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-       	 RelativeLayout rLayout = (RelativeLayout) findViewById (R.id.rLogin);
-            Resources res = getResources(); //resource handle
-            Drawable drawable = res.getDrawable(R.drawable.background_2); //new Image that was added to the res folder
-
-            rLayout.setBackgroundDrawable(drawable);
-            
-          //  l11.setPadding(0, 20, 0, 0);
-       }
-    }
 
 }
